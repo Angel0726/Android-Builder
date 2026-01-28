@@ -118,8 +118,6 @@ jobs:
               echo "✅ deb包安装Python2成功！"
           fi
           
-          # 第三步：验证安装结果（必看，确认是否满足AnyKernel3需求）
-          python2 --version && ls /usr/include/python2.7/Python.h
 
           if sudo apt install lib32ncurses5-dev -y; then
               echo "✅ 系统源安装lib32ncurses5-dev成功！"
