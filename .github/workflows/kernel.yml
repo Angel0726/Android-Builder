@@ -87,7 +87,11 @@ jobs:
       # Install prerequisites for Ubuntu
       - name: ⭐ Install prerequisites
         run: |
-          sudo apt-get update
+          sudo apt-get update -y
+          # Ubuntu 系统（18.04/20.04/22.04 通用）
+          sudo add-apt-repository universe -y
+          # 启用后再次更新源，让系统识别新仓库的包
+          sudo apt update -y
           sudo apt-get install -y curl git ftp lftp wget libarchive-tools ccache python2 python2-dev python3
           sudo apt-get install -y pngcrush schedtool dpkg-dev liblz4-tool make optipng maven device-tree-compiler 
           sudo apt-get install -y libc6-dev-i386 lib32ncurses5-dev libx11-dev lib32z-dev libgl1-mesa-dev xsltproc
