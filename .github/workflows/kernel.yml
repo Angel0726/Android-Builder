@@ -88,11 +88,8 @@ jobs:
       - name: ⭐ Install prerequisites
         run: |
           sudo apt-get update -y
-          # Ubuntu 系统（18.04/20.04/22.04 通用）
-          sudo add-apt-repository universe -y
-          # 启用后再次更新源，让系统识别新仓库的包
-          sudo apt update -y
-          sudo apt-get install -y curl git ftp lftp wget libarchive-tools ccache python2 python2-dev python3
+
+          sudo apt-get install -y curl git ftp lftp wget libarchive-tools ccache python3
           sudo apt-get install -y pngcrush schedtool dpkg-dev liblz4-tool make optipng maven device-tree-compiler 
           sudo apt-get install -y libc6-dev-i386 lib32ncurses5-dev libx11-dev lib32z-dev libgl1-mesa-dev xsltproc
           sudo apt-get install -y libxml2-utils libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools lzop flex tree
@@ -100,6 +97,29 @@ jobs:
           sudo apt-get install -y pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl 
           sudo apt-get install -y zip unzip tar gzip bzip2 rar unrar llvm g++-multilib bison gperf zlib1g-dev automake
 
+          # Ubuntu 系统（18.04/20.04/22.04 通用）
+          sudo add-apt-repository universe -y
+          # 启用后再次更新源，让系统识别新仓库的包
+          sudo apt update -y
+          # 第二步：尝试源安装Python2+dev，失败则执行deb包安装
+          if sudo apt install python2 python2-dev -y; then
+              echo "✅ 系统源安装Python2成功！"
+          else
+              echo "⚠️  系统源无Python2包，开始手动安装官方deb包..."
+              # 下载Python2.7最后稳定版deb包（launchpad官方源，安全可靠）
+              wget -q http://launchpadlibrarian.net/559377322/python2.7_2.7.18-18ubuntu2_amd64.deb
+              wget -q http://launchpadlibrarian.net/559377325/python2.7-dev_2.7.18-18ubuntu2_amd64.deb
+              wget -q http://launchpadlibrarian.net/559377323/python2-minimal_2.7.18-18ubuntu2_amd64.deb
+              # 安装deb包并修复依赖
+              sudo dpkg -i python2.7*.deb python2-minimal*.deb && sudo apt -f install -y
+              # 建立python2软链接（让系统识别python2命令）
+              sudo ln -sf /usr/bin/python2.7 /usr/bin/python2
+              echo "✅ deb包安装Python2成功！"
+          fi
+          
+          # 第三步：验证安装结果（必看，确认是否满足AnyKernel3需求）
+          python2 --version && ls /usr/include/python2.7/Python.h
+                
       # Initialize ccache
       - name: 🚄 Setup ccache
         if: ${{ env.ENABLE_CCACHE == 'true' }}
