@@ -125,7 +125,7 @@ jobs:
               echo "⚠️  系统源无lib32ncurses5-dev包，开始手动安装lib32ncurses6-dev..."
               sudo apt install lib32ncurses6-dev -y
               sudo apt install ib32z1-dev lib32stdc++6 lib32gcc-s1 -y
-                
+          fi 
       # Initialize ccache
       - name: 🚄 Setup ccache
         if: ${{ env.ENABLE_CCACHE == 'true' }}
